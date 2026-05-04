@@ -19,6 +19,27 @@ public class VikingTableModel extends AbstractTableModel {
         fireTableRowsInserted(row, row);
     }
 
+    public void removeViking(String name) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).name().equalsIgnoreCase(name)) {
+                data.remove(i);
+                fireTableRowsDeleted(i, i);
+                return;
+            }
+        }
+    }
+
+    public void updateViking(String name, Viking updated) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).name().equalsIgnoreCase(name)) {
+                data.set(i, updated);
+                fireTableRowsUpdated(i, i);
+                return;
+            }
+        }
+        addViking(updated);
+    }
+
     @Override
     public int getRowCount() {
         return data.size();
@@ -49,8 +70,6 @@ public class VikingTableModel extends AbstractTableModel {
     }
 
     private String formatEquipment(List<EquipmentItem> equipment) {
-        return equipment.stream()
-                .map(item -> item.name() + " [" + item.quality() + "]")
-                .collect(Collectors.joining(", "));
+        return equipment.stream().map(item -> item.name() + " [" + item.quality() + "]").collect(Collectors.joining(", "));
     }
 }
