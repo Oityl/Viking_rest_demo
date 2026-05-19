@@ -84,12 +84,10 @@ public class VikingLambdaFrame extends JFrame {
             output.append(String.format("Борода: %s, волосы: %s → %d чел.%n", beard, hair, cnt));
         });
 
-        JButton oneAxeBtn = new JButton("1 топор");
-        JButton twoAxeBtn = new JButton("2 топора");
-        oneAxeBtn.addActionListener(e ->
-                output.append(String.format("С одним топором: %d чел.%n", lambdaService.countWithOneAxe())));
-        twoAxeBtn.addActionListener(e ->
-                output.append(String.format("С двумя топорами: %d чел.%n", lambdaService.countWithTwoAxes())));
+        JButton axesBtn = new JButton("1 или 2 топора (OR)");
+        axesBtn.addActionListener(e ->
+                output.append(String.format("С одним ИЛИ двумя топорами: %d чел.%n",
+                        lambdaService.countWithOneOrTwoAxes())));
 
         JButton clearBtn = new JButton("Очистить");
         clearBtn.addActionListener(e -> output.setText(""));
@@ -101,7 +99,7 @@ public class VikingLambdaFrame extends JFrame {
         addRow(panel, gbc, row++, maxField, rangeBtn, new JLabel(""));
         addRow(panel, gbc, row++, new JLabel("Борода:"), beardBox, new JLabel("Волосы:"));
         addRow(panel, gbc, row++, hairBox, beardHairBtn, new JLabel(""));
-        addRow(panel, gbc, row++, oneAxeBtn, twoAxeBtn, clearBtn);
+        addRow(panel, gbc, row++, axesBtn, clearBtn, new JLabel(""));
 
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 3; gbc.weightx = 1; gbc.weighty = 1;
         gbc.fill = GridBagConstraints.BOTH;
@@ -132,7 +130,7 @@ public class VikingLambdaFrame extends JFrame {
         JButton redBtn = new JButton("Рыжебородые, по возрасту ↑");
         redBtn.addActionListener(e -> {
             model.setRowCount(0);
-            lambdaService.getRedHairedSortedByAge().forEach(v -> addVikingRow(model, v));
+            lambdaService.getRedBeardedSortedByAge().forEach(v -> addVikingRow(model, v));
         });
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -151,32 +149,25 @@ public class VikingLambdaFrame extends JFrame {
         gbc.insets = new Insets(6, 6, 6, 6);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JTextField idsField = new JTextField("1,2,3,4,5,6,7,8,9,10", 30);
-        JTextArea  output   = new JTextArea(8, 40);
+        JTextArea output = new JTextArea(8, 40);
         output.setEditable(false);
         output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
 
-        JButton maxBtn = new JButton("Найти max ID");
-        maxBtn.addActionListener(e -> {
-            Integer[] ids = parseIds(idsField.getText());
-            lambdaService.findMaxId(ids).ifPresentOrElse(
-                    max -> output.append("Max ID: " + max + "\n"),
-                    ()  -> output.append("Массив пуст\n")
-            );
-        });
+        JButton maxBtn = new JButton("Max ID (с сервера)");
+        maxBtn.addActionListener(e ->
+                lambdaService.findMaxId().ifPresentOrElse(
+                        max -> output.append("Max ID: " + max + "\n"),
+                        ()  -> output.append("Викингов нет\n")
+                ));
 
-        JButton evenBtn = new JButton("Все чётные ID");
-        evenBtn.addActionListener(e -> {
-            Integer[] ids = parseIds(idsField.getText());
-            List<Integer> evens = lambdaService.findEvenIds(ids);
-            output.append("Чётные ID: " + evens + "\n");
-        });
+        JButton evenBtn = new JButton("Чётные ID (с сервера)");
+        evenBtn.addActionListener(e ->
+                output.append("Чётные ID: " + lambdaService.findEvenIds() + "\n"));
 
         JButton clearBtn = new JButton("Очистить");
         clearBtn.addActionListener(e -> output.setText(""));
 
         int row = 0;
-        addRow(panel, gbc, row++, new JLabel("ID (через запятую):"), idsField, new JLabel(""));
         addRow(panel, gbc, row++, maxBtn, evenBtn, clearBtn);
 
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 3; gbc.weightx = 1; gbc.weighty = 1;

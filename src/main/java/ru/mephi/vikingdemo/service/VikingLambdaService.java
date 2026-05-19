@@ -52,20 +52,14 @@ public class VikingLambdaService {
         return countByPredicate(beardPredicate.and(hairPredicate));
     }
 
-    public long countWithOneAxe() {
-        return countByPredicate(v ->
-                v.equipment().stream()
-                        .filter(e -> e.name().equalsIgnoreCase("Axe"))
-                        .count() == 1
-        );
-    }
-
-    public long countWithTwoAxes() {
-        return countByPredicate(v ->
-                v.equipment().stream()
-                        .filter(e -> e.name().equalsIgnoreCase("Axe"))
-                        .count() == 2
-        );
+    public long countWithOneOrTwoAxes() {
+        Predicate<Viking> oneAxe = v -> v.equipment().stream()
+                .filter(e -> e.name().equalsIgnoreCase("Axe"))
+                .count() == 1;
+        Predicate<Viking> twoAxes = v -> v.equipment().stream()
+                .filter(e -> e.name().equalsIgnoreCase("Axe"))
+                .count() == 2;
+        return countByPredicate(oneAxe.or(twoAxes));
     }
 
     public Optional<Viking> getRandomTallViking() {
@@ -85,22 +79,29 @@ public class VikingLambdaService {
                 .collect(Collectors.toList());
     }
 
-    public List<Viking> getRedHairedSortedByAge() {
+    public List<Viking> getRedBeardedSortedByAge() {
+        Predicate<Viking> hasRedHair = v -> v.hairColor() == HairColor.Red;
+        Predicate<Viking> hasBeard = v -> v.beardStyle() != BeardStyle.CLEAN_SHAVEN;
+
         return vikingService.findAll()
                 .stream()
-                .filter(v -> v.hairColor() == HairColor.Red)
+                .filter(hasRedHair.and(hasBeard))
                 .sorted(Comparator.comparingInt(Viking::age))
                 .collect(Collectors.toList());
     }
 
-    public Optional<Integer> findMaxId(Integer[] ids) {
-        return java.util.Arrays.stream(ids)
-                .max(Comparator.comparingInt(id -> id));
+    public Optional<Integer> findMaxId() {
+        List<Viking> all = vikingService.findAll();
+        return all.isEmpty()
+                ? Optional.empty()
+                : Optional.of(all.size() - 1);
     }
 
-    public List<Integer> findEvenIds(Integer[] ids) {
-        return java.util.Arrays.stream(ids)
-                .filter(id -> id % 2 == 0)
+    public List<Integer> findEvenIds() {
+        List<Viking> all = vikingService.findAll();
+        return java.util.stream.IntStream.range(0, all.size())
+                .filter(i -> i % 2 == 0)
+                .boxed()
                 .collect(Collectors.toList());
     }
 

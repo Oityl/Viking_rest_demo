@@ -72,16 +72,10 @@ public class VikingLambdaController {
         return lambdaService.countByBeardAndHair(beardStyle, hairColor);
     }
 
-    @GetMapping("/api/lambda/count/one-axe")
-    @Operation(summary = "Количество викингов с одним топором")
-    public long countOneAxe() {
-        return lambdaService.countWithOneAxe();
-    }
-
-    @GetMapping("/api/lambda/count/two-axes")
-    @Operation(summary = "Количество викингов с двумя топорами")
-    public long countTwoAxes() {
-        return lambdaService.countWithTwoAxes();
+    @GetMapping("/api/lambda/count/axes")
+    @Operation(summary = "Количество викингов с одним или двумя топорами")
+    public long countAxes() {
+        return lambdaService.countWithOneOrTwoAxes();
     }
 
     @GetMapping("/api/lambda/display/random-tall")
@@ -100,26 +94,22 @@ public class VikingLambdaController {
 
     @GetMapping("/api/lambda/display/red-sorted")
     @Operation(summary = "Рыжебородые викинги, отсортированные по возрасту")
-    public List<Viking> redHairedSortedByAge() {
-        return lambdaService.getRedHairedSortedByAge();
+    public List<Viking> redBeardedSortedByAge() {
+        return lambdaService.getRedBeardedSortedByAge();
     }
 
     @GetMapping("/api/lambda/ids/max")
-    @Operation(summary = "Найти максимальный ID из переданного массива")
-    public ResponseEntity<Integer> maxId(
-            @Parameter(description = "Массив ID (через запятую)", example = "1,5,3,9,2")
-            @RequestParam Integer[] ids) {
-        return lambdaService.findMaxId(ids)
+    @Operation(summary = "Максимальный ID среди всех викингов")
+    public ResponseEntity<Integer> maxId() {
+        return lambdaService.findMaxId()
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
 
     @GetMapping("/api/lambda/ids/even")
-    @Operation(summary = "Все чётные ID из переданного массива")
-    public List<Integer> evenIds(
-            @Parameter(description = "Массив ID (через запятую)", example = "1,2,3,4,5,6")
-            @RequestParam Integer[] ids) {
-        return lambdaService.findEvenIds(ids);
+    @Operation(summary = "Все чётные ID среди всех викингов на сервере")
+    public List<Integer> evenIds() {
+        return lambdaService.findEvenIds();
     }
 
     @PostMapping("/api/vikings/bulk")
