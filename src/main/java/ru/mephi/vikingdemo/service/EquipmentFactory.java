@@ -13,30 +13,28 @@ public class EquipmentFactory {
             "Common", "Uncommon", "Rare", "Legendary"
     );
     private static final Random RANDOM = new Random();
-    
+
     public static EquipmentItem createItem() {
 
-        // Случайный тип предмета (равномерно)
         String name = EQUIPMENT_NAMES.get(RANDOM.nextInt(EQUIPMENT_NAMES.size()));
 
-        // Взвешенный выбор качества
         String quality = generateQuality();
 
         return new EquipmentItem(name, quality);
     }
 
     private static String generateQuality() {
-        int roll = RANDOM.nextInt(100); // 0..99
+        int roll = RANDOM.nextInt(100);
 
         if (roll < 60) {
-            return "Common";       // 60%
+            return "Common";
         } else if (roll < 85) {
-            return "Uncommon";     // 25%
+            return "Uncommon";
         } else if (roll < 97) {
-            return "Rare";         // 12%
+            return "Rare";
         } else {
-            return "Legendary";    // 3%
+            return "Legendary";
         }
     }
-    
+
 }

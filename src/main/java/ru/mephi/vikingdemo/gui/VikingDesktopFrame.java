@@ -1,6 +1,7 @@
 package ru.mephi.vikingdemo.gui;
 
 import ru.mephi.vikingdemo.model.Viking;
+import ru.mephi.vikingdemo.service.VikingLambdaService;
 import ru.mephi.vikingdemo.service.VikingService;
 
 import javax.swing.*;
@@ -10,10 +11,12 @@ import java.awt.*;
 public class VikingDesktopFrame extends JFrame {
 
     private final VikingService vikingService;
+    private final VikingLambdaService lambdaService;
     private final VikingTableModel tableModel = new VikingTableModel();
 
-    public VikingDesktopFrame(VikingService vikingService) {
+    public VikingDesktopFrame(VikingService vikingService, VikingLambdaService lambdaService) {
         this.vikingService = vikingService;
+        this.lambdaService = lambdaService;
 
         setTitle("Viking Demo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,14 +35,23 @@ public class VikingDesktopFrame extends JFrame {
         JButton createButton = new JButton("Create random viking");
         createButton.addActionListener(event -> onCreateViking());
 
+        JButton lambdaButton = new JButton("Lambda Tools");
+        lambdaButton.addActionListener(event -> openLambdaFrame());
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(createButton);
+        bottomPanel.add(lambdaButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void onCreateViking() {
         Viking viking = vikingService.createRandomViking();
         tableModel.addViking(viking);
+    }
+
+    private void openLambdaFrame() {
+        VikingLambdaFrame lambdaFrame = new VikingLambdaFrame(lambdaService, vikingService);
+        lambdaFrame.setVisible(true);
     }
 
     public void addNewViking(Viking viking) {
