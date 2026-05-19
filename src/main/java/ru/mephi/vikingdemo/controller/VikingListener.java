@@ -29,7 +29,15 @@ public class VikingListener {
     }
 
     void testAdd() {
-        gui.addNewViking(service.createRandomViking());
+        if (gui != null) {
+            gui.addNewViking(service.createRandomViking());
+        }
+    }
+
+    public void notifyAdd(Viking viking) {
+        if (gui != null) {
+            gui.addNewViking(viking);
+        }
     }
 
     public void notifyRemove(String name) {

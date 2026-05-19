@@ -63,6 +63,7 @@ public class VikingController {
     })
     public ResponseEntity<Viking> createViking(@RequestBody Viking viking) {
         Viking saved = vikingService.addViking(viking);
+        vikingListener.notifyAdd(saved);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
